@@ -1,0 +1,390 @@
+:root {
+  color: #1c2430;
+  background: #f5f7fb;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  min-height: 44px;
+  border: 1px solid #163d70;
+  border-radius: 8px;
+  padding: 0 18px;
+  color: #ffffff;
+  background: #185a9d;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: #144a81;
+  border-color: #144a81;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.56;
+}
+
+.secondary-button {
+  color: #1c2430;
+  background: #ffffff;
+  border-color: #c9d2df;
+}
+
+.secondary-button:hover:not(:disabled) {
+  color: #111827;
+  background: #eef3f8;
+  border-color: #aebccc;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 18px;
+}
+
+.workspace {
+  width: min(100%, 980px);
+  display: grid;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #506174;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(2.3rem, 8vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.algorithm-selector {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #d6dee8;
+}
+
+.selector-label {
+  color: #1c2430;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: block;
+}
+
+.selector-dropdown {
+  padding: 10px 14px;
+  border: 1px solid #c9d2df;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #ffffff;
+  color: #1c2430;
+  cursor: pointer;
+  transition: border-color 160ms ease;
+}
+
+.selector-dropdown:hover {
+  border-color: #185a9d;
+}
+
+.selector-dropdown:focus {
+  outline: none;
+  border-color: #185a9d;
+  box-shadow: 0 0 0 3px rgba(24, 90, 157, 0.1);
+}
+
+.selector-description {
+  margin: 0;
+  color: #506174;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 8px 2px;
+}
+
+.algorithm-visualizer {
+  display: grid;
+  gap: 24px;
+}
+
+.step-counter {
+  min-width: 92px;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  border: 1px solid #d6dee8;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: #ffffff;
+}
+
+.step-counter span {
+  color: #506174;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.step-counter strong {
+  color: #0f172a;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.algorithm-visualizer {
+  display: grid;
+  gap: 24px;
+}
+
+.input-section {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #d6dee8;
+}
+
+.input-label {
+  color: #1c2430;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: block;
+}
+
+.input-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.array-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1px solid #c9d2df;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 160ms ease;
+}
+
+.array-input:focus {
+  outline: none;
+  border-color: #185a9d;
+  box-shadow: 0 0 0 3px rgba(24, 90, 157, 0.1);
+}
+
+.apply-button {
+  padding: 0 24px;
+  white-space: nowrap;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.85rem;
+  display: block;
+  padding: 0 2px;
+}
+
+.visualizer {
+  overflow-x: auto;
+  padding: 24px 4px 12px;
+}
+
+.array-row {
+  min-width: max-content;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.array-item-wrap {
+  width: 76px;
+  display: grid;
+  grid-template-rows: 32px 76px 24px;
+  justify-items: center;
+  gap: 6px;
+}
+
+.pointer-row {
+  height: 32px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 4px;
+}
+
+.pointer-label {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgb(15 23 42 / 14%);
+}
+
+.pointer-low {
+  background: #2563eb;
+}
+
+.pointer-mid {
+  color: #1f2937;
+  background: #facc15;
+}
+
+.pointer-high {
+  background: #dc2626;
+}
+
+.array-box {
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #1f2937;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.value-0 {
+  background: #e8f2ff;
+}
+
+.value-1 {
+  background: #fff8d6;
+}
+
+.value-2 {
+  background: #ffe9e7;
+}
+
+.index-label {
+  color: #506174;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.status-panel {
+  border-left: 4px solid #185a9d;
+  padding: 14px 18px;
+  background: #ffffff;
+}
+
+.status-label {
+  color: #506174;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.status-panel p {
+  min-height: 28px;
+  margin: 4px 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #334155;
+  font-weight: 700;
+}
+
+.speed-control input {
+  width: min(220px, 46vw);
+  accent-color: #185a9d;
+}
+
+.speed-control span {
+  width: 64px;
+  color: #506174;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (max-width: 680px) {
+  .app-shell {
+    align-items: start;
+    padding-top: 24px;
+  }
+
+  .header {
+    align-items: start;
+  }
+
+  .array-row {
+    justify-content: start;
+  }
+
+  .controls {
+    align-items: stretch;
+  }
+
+  .controls button {
+    flex: 1 1 140px;
+  }
+
+  .speed-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

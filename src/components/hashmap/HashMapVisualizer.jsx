@@ -1,222 +1,152 @@
 /**
- * HashMapVisualizer
- * Main component for visualizing HashMap-based DSA problems
- * Orchestrates problem selection, input, step generation, and visualization
+ * HashMapInternalsVisualizer
+ * Main component for visualizing HashMap internals
+ * Demonstrates: hash function, insertions, searches, deletions, and collision handling
  */
 
-import { useState, useMemo, useEffect } from 'react';
-import ProblemSelector from './ProblemSelector.jsx';
-import InputPanel from './InputPanel.jsx';
-import HashTableView from './HashTableView.jsx';
-import StepLog from './StepLog.jsx';
-import Controls from '../Controls.jsx';
+import { useState, useEffect, useMemo } from 'react';
+import BucketArray from './BucketArray.jsx';
+import ControlsPanel from './ControlsPanel.jsx';
+import LogPanel from './LogPanel.jsx';
 import {
-  generateArrayEqualitySteps,
-  generateAnagramSteps,
-  generateTwoSumSteps,
-  HASHMAP_PROBLEMS,
-} from '../../algorithms/hashmap/index.js';
-
-const STEP_GENERATORS = {
-  arrayEquality: generateArrayEqualitySteps,
-  anagramCheck: generateAnagramSteps,
-  twoSum: generateTwoSumSteps,
-};
+  initializeHashMap,
+  insert,
+  search,
+  remove,
+  resetHashMap,
+  getStatistics,
+} from '../../algorithms/hashmap/hashMapInternals.js';
 
 function HashMapVisualizer() {
-  // Problem selection
-  const [selectedProblem, setSelectedProblem] = useState('arrayEquality');
-  
-  // User inputs (dynamic based on problem)
-  const [inputs, setInputs] = useState({
-    arrayA: '1,2,2,3',
-    arrayB: '2,3,1,2',
-  });
+  const DEFAULT_BUCKET_SIZE = 7;
 
-  // Visualization state
-  const [steps, setSteps] = useState([]);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(700);
-  const [inputError, setInputError] = useState('');
+  // State
+  const [buckets, setBuckets] = useState(() =>
+    initializeHashMap(DEFAULT_BUCKET_SIZE)
+  );
+  const [bucketSize, setBucketSize] = useState(DEFAULT_BUCKET_SIZE);
+  const [highlightedBucket, setHighlightedBucket] = useState(null);
+  const [log, setLog] = useState(['👋 Welcome! Insert a key to get started.']);
+  const [lastOperation, setLastOperation] = useState(null);
 
-  // Get problem metadata
-  const problemConfig = HASHMAP_PROBLEMS[selectedProblem];
+  // Statistics
+  const statistics = useMemo(() => getStatistics(buckets), [buckets]);
 
-  // Generate steps when problem or inputs change
-  useEffect(() => {
-    try {
-      setInputError('');
-      const generator = STEP_GENERATORS[selectedProblem];
-
-      let stepArray = [];
-
-      if (selectedProblem === 'arrayEquality') {
-        const arrA = inputs.arrayA.split(',').map((x) => parseInt(x.trim(), 10));
-        const arrB = inputs.arrayB.split(',').map((x) => parseInt(x.trim(), 10));
-        stepArray = generator(arrA, arrB);
-      } else if (selectedProblem === 'anagramCheck') {
-        stepArray = generator(inputs.stringA || '', inputs.stringB || '');
-      } else if (selectedProblem === 'twoSum') {
-        const arr = inputs.array.split(',').map((x) => parseInt(x.trim(), 10));
-        const target = parseInt(inputs.target, 10);
-        stepArray = generator(arr, target);
-      }
-
-      setSteps(stepArray);
-      setCurrentStepIndex(0);
-      setIsPlaying(false);
-    } catch (error) {
-      setInputError('Error generating steps: ' + error.message);
-      setSteps([]);
-    }
-  }, [selectedProblem, inputs]);
-
-  // Get current step
-  const currentStep = steps[currentStepIndex] || null;
-  const isComplete = currentStepIndex >= steps.length - 1;
-
-  // Handle step navigation
-  const handleNextStep = () => {
-    if (currentStepIndex < steps.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
+  // Handle Insert
+  const handleInsert = (key, value) => {
+    const result = insert(buckets, key, value, bucketSize);
+    if (result.success) {
+      setBuckets(result.buckets);
+      setHighlightedBucket(result.highlightedBucket);
+      setLog(result.log);
+      setLastOperation('insert');
+      setTimeout(() => setHighlightedBucket(null), 1000);
+    } else {
+      setLog(result.log);
     }
   };
 
-  const handlePrevStep = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(currentStepIndex - 1);
+  // Handle Search
+  const handleSearch = (key) => {
+    const result = search(buckets, key, bucketSize);
+    if (result.success) {
+      setHighlightedBucket(result.highlightedBucket);
+      setLog(result.log);
+      setLastOperation('search');
+      setTimeout(() => setHighlightedBucket(null), 1000);
+    } else {
+      setLog(result.log);
     }
   };
 
+  // Handle Delete
+  const handleDelete = (key) => {
+    const result = remove(buckets, key, bucketSize);
+    if (result.success) {
+      setBuckets(result.buckets);
+      setHighlightedBucket(result.highlightedBucket);
+      setLog(result.log);
+      setLastOperation('delete');
+      setTimeout(() => setHighlightedBucket(null), 1000);
+    } else {
+      setLog(result.log);
+    }
+  };
+
+  // Handle Reset
   const handleReset = () => {
-    setCurrentStepIndex(0);
-    setIsPlaying(false);
+    const result = resetHashMap(bucketSize);
+    setBuckets(result.buckets);
+    setHighlightedBucket(result.highlightedBucket);
+    setLog(result.log);
+    setLastOperation('reset');
   };
 
-  const handleToggleAutoplay = () => {
-    setIsPlaying((prev) => !prev);
-  };
-
-  // Auto-play logic
-  useEffect(() => {
-    if (!isPlaying || isComplete) {
-      if (isComplete) setIsPlaying(false);
-      return undefined;
-    }
-
-    const timerId = window.setInterval(() => {
-      setCurrentStepIndex((prev) =>
-        prev < steps.length - 1 ? prev + 1 : prev
-      );
-    }, speed);
-
-    return () => window.clearInterval(timerId);
-  }, [isPlaying, isComplete, speed, steps.length]);
-
-  // Handle problem change
-  const handleProblemChange = (problemId) => {
-    setSelectedProblem(problemId);
-    
-    // Reset inputs to defaults for new problem
-    if (problemId === 'arrayEquality') {
-      setInputs({ arrayA: '1,2,2,3', arrayB: '2,3,1,2' });
-    } else if (problemId === 'anagramCheck') {
-      setInputs({ stringA: 'listen', stringB: 'silent' });
-    } else if (problemId === 'twoSum') {
-      setInputs({ array: '2,7,11,15', target: '9' });
-    }
-
-    setInputError('');
-  };
-
-  // Handle input change
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputs((prev) => ({ ...prev, [name]: value }));
-    setInputError('');
+  // Handle Bucket Size Change
+  const handleBucketSizeChange = (newSize) => {
+    setBucketSize(newSize);
+    setLog([
+      `ℹ️ Bucket size set to ${newSize}`,
+      `🔄 Click Reset to apply changes`,
+    ]);
   };
 
   return (
-    <div className="hashmap-visualizer">
-      {/* Problem Selection */}
-      <section className="hashmap-section">
-        <h2>Select Problem</h2>
-        <ProblemSelector
-          selectedProblem={selectedProblem}
-          onSelectProblem={handleProblemChange}
-        />
-      </section>
+    <div className="hashmap-internals-visualizer">
+      {/* Header */}
+      <div className="hashmap-header">
+        <h2>🗺️ HashMap Internals Visualizer</h2>
+        <p className="hashmap-subtitle">
+          Understand how HashMaps work: hash functions, buckets, chaining, and collisions
+        </p>
+      </div>
 
-      {/* Input Panel */}
-      <section className="hashmap-section">
-        <h2>Input</h2>
-        <InputPanel
-          problemConfig={problemConfig}
-          inputs={inputs}
-          onInputChange={handleInputChange}
-          error={inputError}
-        />
-      </section>
-
-      {/* Main Visualization */}
-      {steps.length > 0 && (
-        <>
-          {/* HashMap Table Visualization */}
-          <section className="hashmap-section">
-            <h2>HashMap State</h2>
-            <HashTableView step={currentStep} />
-          </section>
-
-          {/* Step Information */}
-          <section className="hashmap-section">
-            <h2>Current Step</h2>
-            <div className="step-info">
-              <div className="step-counter">
-                Step {currentStepIndex + 1} of {steps.length}
-              </div>
-              <div className={`step-type step-type-${currentStep?.type}`}>
-                {currentStep?.type.toUpperCase()}
-              </div>
-              <div className="step-message">
-                {currentStep?.message}
-              </div>
-              <div className="step-description">
-                {currentStep?.description}
-              </div>
-            </div>
-          </section>
-
-          {/* Step Log */}
-          <section className="hashmap-section">
-            <h2>Step History</h2>
-            <StepLog steps={steps} currentIndex={currentStepIndex} />
-          </section>
-
-          {/* Controls */}
-          <section className="hashmap-section">
-            <h2>Controls</h2>
-            <Controls
-              onNextStep={handleNextStep}
-              onPrevStep={handlePrevStep}
-              onReset={handleReset}
-              onToggleAutoplay={handleToggleAutoplay}
-              isPlaying={isPlaying}
-              speed={speed}
-              onSpeedChange={setSpeed}
-              isComplete={isComplete}
-              disablePrev={currentStepIndex === 0}
-              disableNext={isComplete}
-            />
-          </section>
-        </>
-      )}
-
-      {steps.length === 0 && !inputError && (
-        <div className="no-steps-message">
-          Enter valid inputs to generate visualization steps
+      {/* Main Layout */}
+      <div className="hashmap-layout">
+        {/* Left Panel: Controls */}
+        <div className="hashmap-controls-section">
+          <ControlsPanel
+            onInsert={handleInsert}
+            onSearch={handleSearch}
+            onDelete={handleDelete}
+            onReset={handleReset}
+            bucketSize={bucketSize}
+            onBucketSizeChange={handleBucketSizeChange}
+          />
         </div>
-      )}
+
+        {/* Center Panel: Visualization */}
+        <div className="hashmap-visualization-section">
+          <BucketArray buckets={buckets} highlightedBucket={highlightedBucket} />
+        </div>
+
+        {/* Right Panel: Logs & Statistics */}
+        <div className="hashmap-log-section">
+          <LogPanel log={log} statistics={statistics} />
+        </div>
+      </div>
+
+      {/* Educational Footer */}
+      <div className="hashmap-footer">
+        <div className="footer-section">
+          <h4>📚 Key Concepts</h4>
+          <ul>
+            <li><strong>Hash Function:</strong> index = key % bucketSize</li>
+            <li><strong>Collision:</strong> When multiple keys hash to the same bucket</li>
+            <li><strong>Chaining:</strong> Storing multiple nodes in same bucket via linked list</li>
+            <li><strong>Load Factor:</strong> totalNodes / bucketSize (affects performance)</li>
+          </ul>
+        </div>
+        <div className="footer-section">
+          <h4>💻 Operations</h4>
+          <ul>
+            <li><strong>Insert:</strong> Add or update a key-value pair</li>
+            <li><strong>Search:</strong> Find value by key</li>
+            <li><strong>Delete:</strong> Remove a key-value pair</li>
+            <li><strong>Average Time:</strong> O(1) with good hash function</li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }

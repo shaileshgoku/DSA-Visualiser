@@ -1,9 +1,14 @@
 /**
  * HashMap Algorithms Index
- * Exports all HashMap problem generators and configurations
+ * Exports HashMap internals visualization algorithms
  */
 
-export { HASHMAP_PROBLEMS, getProblem, getProblemIds } from './problems.js';
-export { generateArrayEqualitySteps } from './arrayEquality.js';
-export { generateAnagramSteps } from './anagramCheck.js';
-export { generateTwoSumSteps } from './twoSum.js';
+export {
+  hashFunction,
+  initializeHashMap,
+  insert,
+  search,
+  remove,
+  resetHashMap,
+  getStatistics,
+} from './hashMapInternals.js';

@@ -1,5 +1,4 @@
 import * as dutchFlag from './dutchFlagStep.js';
-import { HASHMAP_PROBLEMS } from './hashmap/problems.js';
 
 /**
  * Registry of all available algorithms
@@ -14,7 +13,12 @@ export const ALGORITHMS = {
     category: 'array',
     module: dutchFlag,
   },
-  // HashMap algorithms are handled separately through HASHMAP_PROBLEMS
+  hashMapInternals: {
+    id: 'hashMapInternals',
+    name: 'HashMap Internals Visualizer',
+    description: 'Understand how HashMaps work internally: hash functions, buckets, chaining, and collision handling.',
+    category: 'hashmap',
+  },
 };
 
 /**
@@ -33,6 +37,6 @@ export const getProblemCategories = () => ['array', 'hashmap', 'tree', 'graph', 
  */
 export const getComponentType = (algorithmId) => {
   if (algorithmId === 'dutchFlag') return 'array';
-  if (Object.keys(HASHMAP_PROBLEMS).includes(algorithmId)) return 'hashmap';
+  if (algorithmId === 'hashMapInternals') return 'hashmap';
   return 'unknown';
 };

@@ -29,7 +29,7 @@ function App() {
         {/* Render appropriate visualizer based on algorithm type */}
         {selectedAlgorithm === 'dutchFlag' && <DutchFlagVisualizer />}
         
-        {componentType === 'hashmap' && <HashMapVisualizer />}
+        {selectedAlgorithm === 'hashMapInternals' && <HashMapVisualizer />}
       </section>
     </main>
   );

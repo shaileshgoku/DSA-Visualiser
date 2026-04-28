@@ -1,30 +1,21 @@
 import { ALGORITHMS } from '../algorithms/index.js';
-import { HASHMAP_PROBLEMS } from '../algorithms/hashmap/index.js';
 
 function AlgorithmSelector({ selectedAlgorithm, onSelectAlgorithm }) {
-  // Combine all available problems
-  const allAlgorithms = {
-    ...ALGORITHMS,
-    // Add HashMap problems to the dropdown
-    ...Object.fromEntries(
-      Object.entries(HASHMAP_PROBLEMS).map(([key, problem]) => [
-        key,
-        {
-          id: key,
-          name: problem.name,
-          description: problem.description,
-          category: problem.category,
-        },
-      ])
-    ),
-  };
+  const selectedProblem = ALGORITHMS[selectedAlgorithm];
 
-  const selectedProblem = allAlgorithms[selectedAlgorithm];
+  // Group algorithms by category
+  const algorithmsByCategory = {};
+  Object.values(ALGORITHMS).forEach((algo) => {
+    if (!algorithmsByCategory[algo.category]) {
+      algorithmsByCategory[algo.category] = [];
+    }
+    algorithmsByCategory[algo.category].push(algo);
+  });
 
   return (
     <div className="algorithm-selector">
       <label htmlFor="algorithm-select" className="selector-label">
-        Select Algorithm / Problem:
+        Select Algorithm / Visualizer:
       </label>
       <select
         id="algorithm-select"
@@ -32,21 +23,15 @@ function AlgorithmSelector({ selectedAlgorithm, onSelectAlgorithm }) {
         onChange={(e) => onSelectAlgorithm(e.target.value)}
         className="selector-dropdown"
       >
-        <optgroup label="Array Algorithms">
-          {Object.entries(ALGORITHMS).map(([key, algo]) => (
-            <option key={key} value={key}>
-              {algo.name}
-            </option>
-          ))}
-        </optgroup>
-
-        <optgroup label="HashMap Problems">
-          {Object.entries(HASHMAP_PROBLEMS).map(([key, problem]) => (
-            <option key={key} value={key}>
-              {problem.name}
-            </option>
-          ))}
-        </optgroup>
+        {Object.entries(algorithmsByCategory).map(([category, algos]) => (
+          <optgroup key={category} label={`${category.charAt(0).toUpperCase() + category.slice(1)} Algorithms`}>
+            {algos.map((algo) => (
+              <option key={algo.id} value={algo.id}>
+                {algo.name}
+              </option>
+            ))}
+          </optgroup>
+        ))}
       </select>
 
       {selectedProblem && (

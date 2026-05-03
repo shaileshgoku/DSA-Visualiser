@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import AlgorithmSelector from './components/AlgorithmSelector.jsx';
 import DutchFlagVisualizer from './components/DutchFlagVisualizer.jsx';
+import TwoPointerVisualizer from './components/TwoPointerVisualizer.jsx';
 import HashMapVisualizer from './components/hashmap/HashMapVisualizer.jsx';
 import { getComponentType } from './algorithms/index.js';
 
@@ -28,6 +29,8 @@ function App() {
 
         {/* Render appropriate visualizer based on algorithm type */}
         {selectedAlgorithm === 'dutchFlag' && <DutchFlagVisualizer />}
+        
+        {selectedAlgorithm === 'twoPointerSum' && <TwoPointerVisualizer />}
         
         {selectedAlgorithm === 'hashMapInternals' && <HashMapVisualizer />}
       </section>

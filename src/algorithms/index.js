@@ -1,4 +1,5 @@
 import * as dutchFlag from './dutchFlagStep.js';
+import * as twoPointerSum from './twoPointerSum.js';
 
 /**
  * Registry of all available algorithms
@@ -12,6 +13,13 @@ export const ALGORITHMS = {
     description: 'Sorts an array containing 0s, 1s, and 2s in linear time.',
     category: 'array',
     module: dutchFlag,
+  },
+  twoPointerSum: {
+    id: 'twoPointerSum',
+    name: 'Two Pointer (Two Sum)',
+    description: 'Find a pair of numbers in an array that sum to a target value using the two-pointer technique.',
+    category: 'array',
+    module: twoPointerSum,
   },
   hashMapInternals: {
     id: 'hashMapInternals',
@@ -37,6 +45,7 @@ export const getProblemCategories = () => ['array', 'hashmap', 'tree', 'graph', 
  */
 export const getComponentType = (algorithmId) => {
   if (algorithmId === 'dutchFlag') return 'array';
+  if (algorithmId === 'twoPointerSum') return 'twoPointer';
   if (algorithmId === 'hashMapInternals') return 'hashmap';
   return 'unknown';
 };

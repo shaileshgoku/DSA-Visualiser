@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import ArrayVisualizer from './ArrayVisualizer.jsx';
 import Controls from './Controls.jsx';
 import {
-  createInitialState,
   generateBubbleSortSteps,
   generateRandomArray,
   INITIAL_ARRAY,
@@ -13,16 +11,22 @@ function BubbleSortVisualizer() {
   const [inputError, setInputError] = useState('');
   const [currentArray, setCurrentArray] = useState(INITIAL_ARRAY);
 
-  // Generate all steps upfront for efficient playback
   const allSteps = useMemo(() => generateBubbleSortSteps(currentArray), [currentArray]);
   
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(700);
 
-  // Current visualization state from all steps
+  if (!allSteps || allSteps.length === 0) {
+    return <div className="algorithm-visualizer">Error: Unable to generate sort steps</div>;
+  }
+
   const currentStep = allSteps[currentStepIndex];
-  const { array, comparing, swapping, sorted, pass, comparisons, swaps, stepCount, isComplete } = currentStep;
+  if (!currentStep) {
+    return <div className="algorithm-visualizer">Error: Invalid step index</div>;
+  }
+
+  const { array, comparing, swapping, sorted, pass, comparisons, swaps, isComplete } = currentStep;
 
   const handleNextStep = () => {
     if (currentStepIndex < allSteps.length - 1) {
@@ -79,22 +83,14 @@ function BubbleSortVisualizer() {
     setInputError('');
   };
 
-  // Auto-play logic
   useEffect(() => {
     if (!isPlaying || isComplete) {
-      if (isComplete) {
-        setIsPlaying(false);
-      }
+      if (isComplete) setIsPlaying(false);
       return undefined;
     }
 
     const timerId = window.setInterval(() => {
-      setCurrentStepIndex((prev) => {
-        if (prev < allSteps.length - 1) {
-          return prev + 1;
-        }
-        return prev;
-      });
+      setCurrentStepIndex((prev) => (prev < allSteps.length - 1 ? prev + 1 : prev));
     }, speed);
 
     return () => window.clearInterval(timerId);
@@ -104,7 +100,6 @@ function BubbleSortVisualizer() {
 
   return (
     <div className="algorithm-visualizer">
-      {/* Input Section */}
       <div className="input-section">
         <label htmlFor="array-input" className="input-label">
           Enter Array (comma-separated numbers):
@@ -142,7 +137,6 @@ function BubbleSortVisualizer() {
         )}
       </div>
 
-      {/* Statistics Panel */}
       <div className="stats-panel" role="status" aria-live="polite">
         <div className="stat-item">
           <span className="stat-label">Step</span>
@@ -162,15 +156,36 @@ function BubbleSortVisualizer() {
         </div>
       </div>
 
-      {/* Array Visualization */}
-      <BubbleSortArrayVisualizer 
-        array={array} 
-        comparing={comparing} 
-        swapping={swapping}
-        sorted={sorted}
-      />
+      <section className="visualizer" aria-label="Array visualization for bubble sort">
+        <div className="array-row">
+          {array.map((value, index) => {
+            const isComparing = comparing.includes(index);
+            const isSorted = sorted.includes(index);
+            
+            let itemClass = 'array-box';
+            if (isSorted) {
+              itemClass += ' sorted';
+            } else if (swapping && isComparing) {
+              itemClass += ' swapping';
+            } else if (isComparing) {
+              itemClass += ' comparing';
+            }
 
-      {/* Status Message */}
+            return (
+              <div className="array-item-wrap" key={index}>
+                <div
+                  className={itemClass}
+                  aria-label={`${isSorted ? 'Sorted' : ''} element ${value} at index ${index}`}
+                >
+                  {value}
+                </div>
+                <span className="index-label">{index}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       <div className="status-panel" role="status" aria-live="polite">
         <span className="status-label">Status</span>
         <p>
@@ -184,12 +199,10 @@ function BubbleSortVisualizer() {
         </p>
       </div>
 
-      {/* Time Complexity Info */}
       <div className="complexity-panel">
         <strong>Time Complexity:</strong> O(n²) | <strong>Space:</strong> O(1)
       </div>
 
-      {/* Controls */}
       <Controls
         onNextStep={handleNextStep}
         onPrevStep={handlePrevStep}
@@ -203,71 +216,6 @@ function BubbleSortVisualizer() {
         isComplete={isComplete}
       />
     </div>
-  );
-}
-
-/**
- * Custom array visualizer for Bubble Sort
- * Shows: comparing state, swapping state, and sorted elements
- */
-function BubbleSortArrayVisualizer({ array, comparing, swapping, sorted }) {
-  return (
-    <section className="visualizer" aria-label="Array visualization for bubble sort">
-      <div className="array-row">
-        {array.map((value, index) => {
-          const isComparing = comparing.includes(index);
-          const isSorted = sorted.includes(index);
-          
-          // Determine CSS class for styling
-          let itemClass = 'array-box';
-          if (isSorted) {
-            itemClass += ' sorted';
-          } else if (swapping && isComparing) {
-            itemClass += ' swapping';
-          } else if (isComparing) {
-            itemClass += ' comparing';
-          }
-
-          return (
-            <div className="array-item-wrap" key={`${value}-${index}`}>
-              <div
-                className={itemClass}
-                aria-label={`${isSorted ? 'Sorted' : ''} element ${value} at index ${index}`}
-              >
-                {value}
-              </div>
-              <span className="index-label">{index}</span>
-            </div>
-          );
-        })}
-        {array.map((value, index) => {
-          const isComparing = comparing.includes(index);
-          const isSorted = sorted.includes(index);
-          
-          // Determine CSS class for styling
-          let itemClass = 'array-box';
-          if (isSorted) {
-            itemClass += ' sorted';
-          } else if (swapping && isComparing) {
-            itemClass += ' swapping';
-          } else if (isComparing) {
-            itemClass += ' comparing';
-          }
-
-          return (
-            <div className="array-item-wrap" key={`${value}-${index}`}>
-              <div
-                className={itemClass}
-                aria-label={`${isSorted ? 'Sorted' : ''} element ${value} at index ${index}`}
-              >
-                {value}
-              </div>
-              <span className="index-label">{index}</span>
-            </div>
-          );
-        })}
-      </div>
-    </section>
   );
 }
 

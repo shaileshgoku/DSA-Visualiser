@@ -1,32 +1,6 @@
-/**
- * Bubble Sort Algorithm - Step-by-step generator
- * 
- * Time Complexity:
- * - Best: O(n) when array is already sorted
- * - Average: O(n²)
- * - Worst: O(n²)
- * 
- * Space Complexity: O(1)
- */
+// Quick test of bubble sort algorithm
+const INITIAL_ARRAY = [64, 34, 25, 12, 22, 11, 90];
 
-export const INITIAL_ARRAY = [64, 34, 25, 12, 22, 11, 90];
-
-export const createInitialState = (array = INITIAL_ARRAY) => ({
-  array: [...array],
-  comparing: [],
-  swapping: false,
-  sorted: [],
-  pass: 0,
-  comparisons: 0,
-  swaps: 0,
-  stepCount: 0,
-  isComplete: false,
-  currentIndex: 0,
-});
-
-/**
- * Swap two elements in an array
- */
 const swap = (array, firstIndex, secondIndex) => {
   const nextArray = [...array];
   [nextArray[firstIndex], nextArray[secondIndex]] = [
@@ -36,11 +10,7 @@ const swap = (array, firstIndex, secondIndex) => {
   return nextArray;
 };
 
-/**
- * Generate all steps for bubble sort
- * This provides a complete visualization sequence
- */
-export const generateBubbleSortSteps = (array = INITIAL_ARRAY) => {
+const generateBubbleSortSteps = (array = INITIAL_ARRAY) => {
   let arr = [...array];
   const steps = [];
   let comparisons = 0;
@@ -138,27 +108,9 @@ export const generateBubbleSortSteps = (array = INITIAL_ARRAY) => {
   return steps;
 };
 
-/**
- * Get next step in bubble sort visualization
- * Used for step-by-step playback
- */
-export const getNextBubbleSortStep = (state) => {
-  if (state.isComplete) {
-    return state;
-  }
-
-  // Generate all steps once (cached in component)
-  // This function is kept for compatibility but is typically
-  // used with pre-generated steps in the component
-  return state;
-};
-
-/**
- * Create a new array with values between min and max
- */
-export const generateRandomArray = (length = 10, min = 10, max = 100) => {
-  return Array.from(
-    { length },
-    () => Math.floor(Math.random() * (max - min + 1)) + min
-  );
-};
+// Test
+const steps = generateBubbleSortSteps();
+console.log(`Generated ${steps.length} steps`);
+console.log('First step:', JSON.stringify(steps[0], null, 2));
+console.log('Last step:', JSON.stringify(steps[steps.length - 1], null, 2));
+console.log('✅ Algorithm test completed');

@@ -1,5 +1,6 @@
 import * as dutchFlag from './dutchFlagStep.js';
 import * as twoPointerSum from './twoPointerSum.js';
+import * as bubbleSort from './bubbleSort.js';
 
 /**
  * Registry of all available algorithms
@@ -20,6 +21,13 @@ export const ALGORITHMS = {
     description: 'Find a pair of numbers in an array that sum to a target value using the two-pointer technique.',
     category: 'array',
     module: twoPointerSum,
+  },
+  bubbleSort: {
+    id: 'bubbleSort',
+    name: 'Bubble Sort',
+    description: 'Sort an array using the bubble sort algorithm. Watch how adjacent elements bubble to their correct positions.',
+    category: 'sorting',
+    module: bubbleSort,
   },
   hashMapInternals: {
     id: 'hashMapInternals',
@@ -46,6 +54,7 @@ export const getProblemCategories = () => ['array', 'hashmap', 'tree', 'graph', 
 export const getComponentType = (algorithmId) => {
   if (algorithmId === 'dutchFlag') return 'array';
   if (algorithmId === 'twoPointerSum') return 'twoPointer';
+  if (algorithmId === 'bubbleSort') return 'bubbleSort';
   if (algorithmId === 'hashMapInternals') return 'hashmap';
   return 'unknown';
 };

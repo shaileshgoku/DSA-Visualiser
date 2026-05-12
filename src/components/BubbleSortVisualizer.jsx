@@ -240,6 +240,32 @@ function BubbleSortArrayVisualizer({ array, comparing, swapping, sorted }) {
             </div>
           );
         })}
+        {array.map((value, index) => {
+          const isComparing = comparing.includes(index);
+          const isSorted = sorted.includes(index);
+          
+          // Determine CSS class for styling
+          let itemClass = 'array-box';
+          if (isSorted) {
+            itemClass += ' sorted';
+          } else if (swapping && isComparing) {
+            itemClass += ' swapping';
+          } else if (isComparing) {
+            itemClass += ' comparing';
+          }
+
+          return (
+            <div className="array-item-wrap" key={`${value}-${index}`}>
+              <div
+                className={itemClass}
+                aria-label={`${isSorted ? 'Sorted' : ''} element ${value} at index ${index}`}
+              >
+                {value}
+              </div>
+              <span className="index-label">{index}</span>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
